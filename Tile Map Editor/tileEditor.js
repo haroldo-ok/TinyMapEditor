@@ -52,9 +52,6 @@ var tinyMapEditor = (function() {
                 }
                 if (tool == "fill"){
                 	fillTile = tiles[destTile.col][destTile.row].base
-                	/*var easystar = new EasyStar.js();
-                	easystar.setGrid(tiles);
-                	easystar.setAcceptableTiles([fillTile]);*/
                 	fillMap = JSON.parse(JSON.stringify(tiles));
                 	for (x = 0; x < width; x++) {
 	                    for (y = 0; y < height; y++) {
@@ -84,16 +81,6 @@ var tinyMapEditor = (function() {
                     			map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
 	                  
 	                    	}
-	                    	/*easystar.findPath(x, y, this.getTile(e).row, this.getTile(e).col, function( path ){
-	                    		if (path != null){
-	                    			console.log()
-	                    			tiles[y][x].base = srcTile.row + srcTile.col * 57
-	                    			map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
-	                    		}
-	                    	});
-	                    	easystar.calculate() */
-	                    	
-	                    	
 	                    }
                     }
                 }
@@ -136,7 +123,7 @@ var tinyMapEditor = (function() {
         eraseTile : function(e) {
             var destTile;
             if (!draw) {
-                if (e.target.id === 'erase' && srcTile) {
+                if (tool === 'erase' && srcTile) {
                     srcTile = 0;
                 } else if (e.target.id === 'layer1' && !srcTile) {
                     destTile = this.getTile(e);
