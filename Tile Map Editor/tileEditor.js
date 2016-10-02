@@ -2,10 +2,11 @@ var tinyMapEditor = (function() {
     var win = window,
         doc = document,
         pal = doc.getElementById('palette').getContext('2d'),
-        map = doc.getElementById('tileEditor').getContext('2d'),
+        map = doc.getElementById('layer1').getContext('2d'),
+        layer3 = doc.getElementById('layer3').getContext('2d'),
         width = 10,
         height = 10,
-        tileSize = 32,
+        tileSize = 16,
         srcTile = 0,
         sprite = new Image(),
         tiles, // used for demo, not *really* needed atm
@@ -19,21 +20,46 @@ var tinyMapEditor = (function() {
     var app = {
         getTile : function(e) {
             if (e.target.nodeName === 'CANVAS') {
-                var row = e.layerX / tileSize | 0,
-                    col = e.layerY / tileSize | 0;
-
-                if (e.target.id === 'palette') srcTile = { row : row, col : col };
-                return { row : row, col : col };
+                if (e.target.id === 'palette'){
+                	var row = (e.layerX - (1 * (e.layerX / tileSize) | 0)) / tileSize | 0,
+                    	col = (e.layerY - (1 * (e.layerY / tileSize) | 0)) / tileSize | 0;
+                	srcTile = { row : row, col : col };
+                	return { row : row, col : col };
+                }
+                if (e.target.id === 'layer1'){
+                	var row = (e.layerX) / 32 | 0,
+                    	col = (e.layerY) / 32 | 0;
+                	return { row : row, col : col };
+                }
             }
         },
 
         setTile : function(e) {
             var destTile;
 
-            if (e.target.id === 'tileEditor' && srcTile && !draw) {
+            if (e.target.id === 'layer1' && srcTile && !draw) {
                 destTile = this.getTile(e);
-                map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
-                map.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+                hitable = document.getElementById('hitable').checked ? 0 : 1;
+                hitable = !hitable
+                if (hitable){
+                	tiles[this.getTile(e).col][this.getTile(e).row].hit = !tiles[this.getTile(e).col][this.getTile(e).row].hit
+                	if (tiles[this.getTile(e).col][this.getTile(e).row].hit == false){
+                		layer3.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+                	}
+                }
+                if (!hitable){
+	                tiles[this.getTile(e).col][this.getTile(e).row].base = srcTile.row + srcTile.col * 57
+	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+	                map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+                }
+                
+                if (tiles[this.getTile(e).col][this.getTile(e).row].hit == true){
+                	layer3.beginPath();
+                	layer3.lineWidth="2";
+                	layer3.strokeStyle="red";
+                	layer3.rect(destTile.row * 32 + 1, destTile.col * 32 + 1, 32 - 2, 32 - 2); 
+                	layer3.stroke();
+                }
             }
         },
 
@@ -58,7 +84,7 @@ var tinyMapEditor = (function() {
 
             this.drawTool = function() {
                 rect.width = tileSize;
-                srcTile ? ctx.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, 0, 0, tileSize, tileSize) : eraser();
+                srcTile ? ctx.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, 0, 0, tileSize, tileSize) : eraser();
             };
         },
 
@@ -67,14 +93,16 @@ var tinyMapEditor = (function() {
             if (!draw) {
                 if (e.target.id === 'erase' && srcTile) {
                     srcTile = 0;
-                } else if (e.target.id === 'tileEditor' && !srcTile) {
+                } else if (e.target.id === 'layer1' && !srcTile) {
                     destTile = this.getTile(e);
-                    map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+                    map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
                 }
             }
         },
 
         drawMap : function() {
+        	/*
+        }
             var i, j, invert = document.getElementById('invert').checked ? 0 : 1;
 
             map.fillStyle = 'black';
@@ -86,7 +114,7 @@ var tinyMapEditor = (function() {
                         // map.putImageData(tiles[i][j], i * tileSize, j * tileSize); // temp fix to colour collision layer black
                     }
                 }
-            }
+            }*/
         },
 
         clearMap : function(e) {
@@ -104,18 +132,15 @@ var tinyMapEditor = (function() {
                     len,
                     x, y, z;
 
-                tiles = []; // graphical tiles (not currently needed, can be used to create standard tile map)
                 alpha = []; // collision map
 
                 for (x = 0; x < width; x++) { // tiles across
-                    tiles[x] = [];
                     alpha[x] = [];
 
-                    for (y = 0; y < height; y++) { // tiles down
+                    /*for (y = 0; y < height; y++) { // tiles down
                         pixels = map.getImageData(x * tileSize, y * tileSize, tileSize, tileSize);
                         len = pixels.data.length;
 
-                        tiles[x][y] = pixels; // store ALL tile data
                         alpha[x][y] = [];
 
                         for (z = 0; z < len; z += 4) {
@@ -131,9 +156,14 @@ var tinyMapEditor = (function() {
                             alpha[x][y] = 0;
                         } else { // partial alpha, build pixel map
                             alpha[x][y] = this.sortPartial(alpha[x][y]);
-                            tiles[x][y] = pixels; // (temporarily) used for drawing map
                         }
+                    } */
+                    for (x = 0; x < width; x++) {
+	                    for (y = 0; y < height; y++) {
+	                    	//this doesn't do anything yet
+	                    }
                     }
+                    
                 }
 
                 this.outputJSON();
@@ -159,22 +189,7 @@ var tinyMapEditor = (function() {
         },
 
         outputJSON : function() {
-            var output = '',
-                invert = document.getElementById('invert').checked;
-
-            if (invert) {
-                alpha.forEach(function(arr) {
-                    arr.forEach(function(item, index) {
-                        // using bitwise not to flip values
-                        if (typeof item === 'number') arr[index] = Math.abs(~-item);
-                    });
-                });
-            }
-
-            // output = (output.split('],'));
-            // output = output.concat('],');
-
-            output = JSON.stringify(alpha);
+            output = JSON.stringify(tiles);
             doc.getElementsByTagName('textarea')[0].value = output;
         },
 
@@ -222,12 +237,29 @@ var tinyMapEditor = (function() {
                 _this.destroy();
                 _this.init();
             }, false);
+            
+            document.getElementById('size').addEventListener('change', function() {
+                tileSize = +this.value;
+                _this.destroy();
+                _this.init();
+            }, false);
         },
 
         init : function() {
-            sprite.src = 'assets/tilemap_32a.png';
-            map.canvas.width = width * tileSize;
-            map.canvas.height = height * tileSize;
+            sprite.src = 'assets/outside.png';
+            map.canvas.width = width * 32;
+            map.canvas.height = height * 32;
+            
+            layer3.canvas.width = width * 32;
+            layer3.canvas.height = height * 32;
+            
+            tiles = []
+            for (y = 0; y < width; y++) {
+            	tiles[y] = []
+                for (x = 0; x < height; x++) {
+                	tiles[y][x] = {base: null, top:null, hit: false}
+                }
+            }
             this.drawTool();
         },
 
