@@ -1,3 +1,8 @@
-A super-basic JavaScript map editor for HTML5 games.  Useful for creating a lightweight JSON collision layer (think 2d platformer collisions, grid masks in puzzle games, brick position in Breakout, etc).
+# JavaScript Tile Map Editor
 
-Read more here: http://nicolahibbert.com/curved-sloped-tiles-javascript-games
+This is a basic map editor for games that use a tile based system for creating maps.
+
+
+
+Credits to https://github.com/nikki for the original project (http://nicolahibbert.com/curved-sloped-tiles-javascript-games)
+
