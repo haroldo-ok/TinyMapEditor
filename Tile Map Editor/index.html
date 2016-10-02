@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="assets/tinyMapEditor.css">
     
     <link rel="icon" type="image/png" href="assets/map-icon.png" sizes="128x128" />
+    
+    <script src="astar.js"></script>
 </head>
 <body>
     <section>
@@ -31,9 +33,14 @@
             </li>
             <li id="tools">
                 <label>Tools</label>
-                <p><input id="erase" type="button" value="Tile Eraser" /></p>
-                <p><input id="build" type="button" value="Build Map" /></p>
-                <p><input id="clear" type="button" value="Clear Canvas" /></p>
+                <p>Tool: <select id="editTools">
+                    <option value="stamp" selected>Stamp</option>
+                    <option value="fill">Fill</option>
+                    <option value="erase">Eraser</option>
+                    <option value="hit">Toggle Hitboxes</option>
+                </select></p>
+                <!--<p><input id="erase" type="button" value="Tile Eraser" /></p>-->
+                <p><input id="build" type="button" value="Build Map" /> <input id="clear" type="button" value="Clear Canvas" /></p>
                 <br />
                 <p>
                     <span>Edit Hitboxes?</span>

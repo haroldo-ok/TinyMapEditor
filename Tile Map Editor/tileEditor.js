@@ -9,9 +9,9 @@ var tinyMapEditor = (function() {
         tileSize = 16,
         srcTile = 0,
         sprite = new Image(),
-        tiles, // used for demo, not *really* needed atm
+        tiles,
         alpha,
-
+        tool = doc.getElementById('editTools').value,
         player,
         draw,
         build = doc.getElementById('build'),
@@ -39,18 +39,63 @@ var tinyMapEditor = (function() {
 
             if (e.target.id === 'layer1' && srcTile && !draw) {
                 destTile = this.getTile(e);
-                hitable = document.getElementById('hitable').checked ? 0 : 1;
-                hitable = !hitable
-                if (hitable){
+                if (tool == "hit"){
                 	tiles[this.getTile(e).col][this.getTile(e).row].hit = !tiles[this.getTile(e).col][this.getTile(e).row].hit
                 	if (tiles[this.getTile(e).col][this.getTile(e).row].hit == false){
                 		layer3.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
                 	}
                 }
-                if (!hitable){
-	                tiles[this.getTile(e).col][this.getTile(e).row].base = srcTile.row + srcTile.col * 57
+                if (tool == "stamp"){
+	                tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57
 	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
 	                map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+                }
+                if (tool == "fill"){
+                	fillTile = tiles[destTile.col][destTile.row].base
+                	/*var easystar = new EasyStar.js();
+                	easystar.setGrid(tiles);
+                	easystar.setAcceptableTiles([fillTile]);*/
+                	fillMap = JSON.parse(JSON.stringify(tiles));
+                	for (x = 0; x < width; x++) {
+	                    for (y = 0; y < height; y++) {
+	                    	if (fillMap[y][x].base == fillTile){
+	                    		fillMap[y][x] = 1
+	                    	}
+	                    	else {
+	                    		fillMap[y][x] = 0
+	                    	}
+	                    }
+                	}
+                	
+                	var graph = new Graph(fillMap)
+                	
+                	tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57
+	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+	                map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+                	
+                	for (x = 0; x < width; x++) {
+	                    for (y = 0; y < height; y++) {
+	                    	var start = graph.grid[y][x];
+	                    	var end = graph.grid[this.getTile(e).col][this.getTile(e).row];
+	                    	var result = astar.search(graph, start, end);
+	                    	if (result.length != 0 && fillMap[y][x] == 1){
+	                    		tiles[y][x].base = srcTile.row + srcTile.col * 57
+	                    		map.clearRect(x * 32, y * 32, 32, 32);
+                    			map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
+	                  
+	                    	}
+	                    	/*easystar.findPath(x, y, this.getTile(e).row, this.getTile(e).col, function( path ){
+	                    		if (path != null){
+	                    			console.log()
+	                    			tiles[y][x].base = srcTile.row + srcTile.col * 57
+	                    			map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
+	                    		}
+	                    	});
+	                    	easystar.calculate() */
+	                    	
+	                    	
+	                    }
+                    }
                 }
                 
                 if (tiles[this.getTile(e).col][this.getTile(e).row].hit == true){
@@ -224,8 +269,12 @@ var tinyMapEditor = (function() {
 
             /**
              * Input change events
-             */
-
+             */            
+            document.getElementById('editTools').addEventListener('change', function() {
+                tool = this.value;
+                console.log(tool)
+            }, false);
+            
             document.getElementById('width').addEventListener('change', function() {
                 width = +this.value;
                 _this.destroy();
