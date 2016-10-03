@@ -8,10 +8,12 @@ var tinyMapEditor = (function() {
         height = 10,
         tileSize = 16,
         srcTile = 0,
+        srcList = [],
         sprite = new Image(),
         tiles,
         alpha,
         tool = doc.getElementById('editTools').value,
+        tileMode = doc.getElementById('mode').value,
         player,
         draw,
         build = doc.getElementById('build'),
@@ -23,7 +25,13 @@ var tinyMapEditor = (function() {
                 if (e.target.id === 'palette'){
                 	var row = (e.layerX - (1 * (e.layerX / tileSize) | 0)) / tileSize | 0,
                     	col = (e.layerY - (1 * (e.layerY / tileSize) | 0)) / tileSize | 0;
-                	srcTile = { row : row, col : col };
+                	if (tileMode == "single"){
+                		srcTile = { row : row, col : col };
+                	};
+                	if (tileMode == "random"){
+                		srcList.push({ row : row, col : col });
+                	};
+                	
                 	return { row : row, col : col };
                 }
                 if (e.target.id === 'layer1'){
@@ -64,11 +72,19 @@ var tinyMapEditor = (function() {
 	                    }
                 	}
                 	
+                	if (tileMode == "random"){
+                		st = srcList[Math.floor(Math.random()*srcList.length)]
+                	}
+                	if (tileMode == "single"){
+                		var st = srcTile
+                	}
+                	
+                	
                 	var graph = new Graph(fillMap)
                 	
-                	tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57
+                	tiles[destTile.col][destTile.row].base = st.row + st.col * 57
 	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
-	                map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+	                map.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
                 	
                 	for (x = 0; x < width; x++) {
 	                    for (y = 0; y < height; y++) {
@@ -76,9 +92,12 @@ var tinyMapEditor = (function() {
 	                    	var end = graph.grid[this.getTile(e).col][this.getTile(e).row];
 	                    	var result = astar.search(graph, start, end);
 	                    	if (result.length != 0 && fillMap[y][x] == 1){
-	                    		tiles[y][x].base = srcTile.row + srcTile.col * 57
+	                    		if (tileMode == "random"){
+	                        		st = srcList[Math.floor(Math.random()*srcList.length)]
+	                        	}
+	                    		tiles[y][x].base = st.row + st.col * 57
 	                    		map.clearRect(x * 32, y * 32, 32, 32);
-                    			map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
+                    			map.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
 	                  
 	                    	}
 	                    }
@@ -96,27 +115,43 @@ var tinyMapEditor = (function() {
         },
 
         drawTool : function() {
-            var rect = doc.createElement('canvas'),
-                ctx = rect.getContext('2d'),
+            rect = doc.createElement('canvas')
+            ctx = rect.getContext('2d')
                 eraser = function() {
                     ctx.fillStyle = 'red';
-                    ctx.fillRect(0, 0, tileSize, tileSize);
+                    ctx.fillRect(0, 0, 32, 32);
                     ctx.fillStyle = 'white';
-                    ctx.fillRect(2, 2, tileSize - 4, tileSize - 4);
+                    ctx.fillRect(2, 2, 32 - 4, 32 - 4);
                     ctx.strokeStyle = 'red';
                     ctx.lineWidth = 2;
-                    ctx.moveTo(tileSize, 0);
-                    ctx.lineTo(0, tileSize);
+                    ctx.moveTo(32, 0);
+                    ctx.lineTo(0, 32);
                     ctx.stroke();
                 };
 
-            rect.width = rect.height = tileSize;
+            rect.width = rect.height = 32;
             doc.getElementById('selected').appendChild(rect);
             eraser();
 
             this.drawTool = function() {
-                rect.width = tileSize;
-                srcTile ? ctx.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, 0, 0, tileSize, tileSize) : eraser();
+            	if (tileMode == "single"){
+            		console.log(rect)
+	                rect.width = 32;
+	                srcTile ? ctx.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, 0, 0, 32, 32) : eraser();
+            	}
+            	if (tileMode == "random"){
+            		if (srcList[srcList.length - 1] != undefined){
+            			srcTile = true;
+	        			rect = doc.createElement('canvas')
+	                    ctx = rect.getContext('2d')
+	                    rect.width = rect.height = 32;
+	        			doc.getElementById('selected').appendChild(rect);
+	        			ctx.drawImage(sprite, srcList[srcList.length - 1].row * tileSize + 1 * srcList[srcList.length - 1].row, srcList[srcList.length - 1].col * tileSize + 1 * srcList[srcList.length - 1].col, tileSize, tileSize, 0, 0, 32, 32);
+            		}
+            		else{
+            			srcList.splice(srcList.length - 1, 1)
+            		}
+            	}
             };
         },
 
@@ -259,7 +294,28 @@ var tinyMapEditor = (function() {
              */            
             document.getElementById('editTools').addEventListener('change', function() {
                 tool = this.value;
-                console.log(tool)
+            }, false);
+            
+            document.getElementById('mode').addEventListener('change', function() {
+                tileMode = this.value;
+                console.log("change")
+                if (tileMode == "random"){
+                	srcList = []
+                	cntnt = doc.getElementById('selected')
+                	console.log(cntnt.childNodes)
+                	while (cntnt.childNodes.length > 3) {
+                	    cntnt.removeChild(cntnt.lastChild);
+                	}
+                }
+                if (tileMode == "single"){
+                	while (cntnt.childNodes.length > 3) {
+                	    cntnt.removeChild(cntnt.lastChild);
+                	}
+                	rect = doc.createElement('canvas')
+                    ctx = rect.getContext('2d')
+                    rect.width = rect.height = 32;
+        			doc.getElementById('selected').appendChild(rect);
+                }
             }, false);
             
             document.getElementById('width').addEventListener('change', function() {

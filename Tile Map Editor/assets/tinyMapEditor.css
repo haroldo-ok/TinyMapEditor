@@ -22,7 +22,7 @@ canvas { cursor: pointer; position: relative; }
 #layer3 { position: absolute; left: 0; top: 0; z-index: 2; pointer-events:none;}
 
 /*************************************** Tools  */
-menu { position: fixed; right: 0; top: 0; margin: 0; width: 250px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
+menu { position: fixed;  overflow-y: auto; right: 0; top: 0; margin: 0; width: 250px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
 menu ul { list-style-type: none; text-align: center }
 menu li { padding-bottom: 10px }
 menu p { margin-bottom: 10px }

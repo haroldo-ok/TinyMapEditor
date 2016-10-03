@@ -24,12 +24,17 @@
                 <p><label>Map height:</label><input type="text" value="10" maxlength="3" id="height" /><span>tiles</span></p>
             </li>
             <li id="tiles">
-                <label>Tiles</label>
+                <label>Tiles </label>
                 <canvas id="palette"></canvas>
                 <!--<input type="file" disabled />-->
             </li>
             <li id="selected">
-                <label>Selected Tile</label>
+                <label>Selected Tile <select id="mode">
+                                        <option disabled>Mode</option>
+                                        <option value="single" selected>Single</option>
+                                        <option value="random">Random</option>
+                                    </select>   
+                </label>
             </li>
             <li id="tools">
                 <label>Tools</label>
