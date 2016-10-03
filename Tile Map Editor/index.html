@@ -12,6 +12,7 @@
 <body>
     <section>
         <canvas id="layer1"></canvas>
+        <canvas id="layer2"></canvas>
         <canvas id="layer3"></canvas>
     </section>
 
@@ -38,11 +39,15 @@
             </li>
             <li id="tools">
                 <label>Tools</label>
-                <p>Tool: <select id="editTools">
+                <p>Tool: <select id="editTools" style="width: 120px;">
                     <option value="stamp" selected>Stamp</option>
                     <option value="fill">Fill</option>
                     <option value="erase">Eraser</option>
                     <option value="hit">Toggle Hitboxes</option>
+                </select></p>
+                <p>Layer: <select id="layer" style="width: 120px;">
+                    <option value="base" selected>Base</option>
+                    <option value="top">Top</option>
                 </select></p>
                 <!--<p><input id="erase" type="button" value="Tile Eraser" /></p>-->
                 <p><input id="build" type="button" value="Build Map" /> <input id="clear" type="button" value="Clear Canvas" /></p>

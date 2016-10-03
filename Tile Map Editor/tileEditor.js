@@ -3,6 +3,7 @@ var tinyMapEditor = (function() {
         doc = document,
         pal = doc.getElementById('palette').getContext('2d'),
         map = doc.getElementById('layer1').getContext('2d'),
+        layer2 = doc.getElementById('layer2').getContext('2d'),
         layer3 = doc.getElementById('layer3').getContext('2d'),
         width = 10,
         height = 10,
@@ -14,6 +15,7 @@ var tinyMapEditor = (function() {
         alpha,
         tool = doc.getElementById('editTools').value,
         tileMode = doc.getElementById('mode').value,
+        layer = doc.getElementById('layer').value,
         player,
         draw,
         build = doc.getElementById('build'),
@@ -44,6 +46,13 @@ var tinyMapEditor = (function() {
 
         setTile : function(e) {
             var destTile;
+            
+            if (layer == "base"){
+            	can = map
+            }
+            if (layer == "top"){
+            	can = layer2
+            }
 
             if (e.target.id === 'layer1' && srcTile && !draw) {
                 destTile = this.getTile(e);
@@ -54,9 +63,10 @@ var tinyMapEditor = (function() {
                 	}
                 }
                 if (tool == "stamp"){
-	                tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57
-	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
-	                map.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+	                if (layer == "base") {tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57}
+	                if (layer == "top") {tiles[destTile.col][destTile.row].top = srcTile.row + srcTile.col * 57}
+	                can.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+	                can.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
                 }
                 if (tool == "fill"){
                 	fillTile = tiles[destTile.col][destTile.row].base
@@ -82,9 +92,10 @@ var tinyMapEditor = (function() {
                 	
                 	var graph = new Graph(fillMap)
                 	
-                	tiles[destTile.col][destTile.row].base = st.row + st.col * 57
-	                map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
-	                map.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
+                	if (layer == "base") {tiles[destTile.col][destTile.row].base = st.row + st.col * 57}
+                	if (layer == "top") {tiles[destTile.col][destTile.row].top = st.row + st.col * 57}
+                	can.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+                	can.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
                 	
                 	for (x = 0; x < width; x++) {
 	                    for (y = 0; y < height; y++) {
@@ -95,9 +106,10 @@ var tinyMapEditor = (function() {
 	                    		if (tileMode == "random"){
 	                        		st = srcList[Math.floor(Math.random()*srcList.length)]
 	                        	}
-	                    		tiles[y][x].base = st.row + st.col * 57
-	                    		map.clearRect(x * 32, y * 32, 32, 32);
-                    			map.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
+	                    		if (layer == "base") {tiles[y][x].base = st.row + st.col * 57}
+	                    		if (layer == "top") {tiles[y][x].top = st.row + st.col * 57}
+	                    		can.clearRect(x * 32, y * 32, 32, 32);
+	                    		can.drawImage(sprite, st.row * tileSize + 1 * st.row, st.col * tileSize + 1 * st.col, tileSize, tileSize, x * 32, y * 32, 32, 32);
 	                  
 	                    	}
 	                    }
@@ -162,8 +174,15 @@ var tinyMapEditor = (function() {
                     srcTile = 0;
                 } else if (e.target.id === 'layer1' && !srcTile) {
                     destTile = this.getTile(e);
-                    map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
-                    tiles[destTile.col][destTile.row].base = null
+                    if (layer == "base") {
+                    	map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+                    	tiles[destTile.col][destTile.row].base = null
+                    }
+                    if (layer == "top") {
+                    	layer2.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+                    	tiles[destTile.col][destTile.row].top = null
+                    }
+                    
                 }
             }
         },
@@ -304,6 +323,10 @@ var tinyMapEditor = (function() {
                 tool = this.value;
             }, false);
             
+            document.getElementById('layer').addEventListener('change', function() {
+                layer = this.value;
+            }, false);
+            
             document.getElementById('mode').addEventListener('change', function() {
                 tileMode = this.value;
                 console.log("change")
@@ -349,6 +372,9 @@ var tinyMapEditor = (function() {
             sprite.src = 'assets/outside.png';
             map.canvas.width = width * 32;
             map.canvas.height = height * 32;
+            
+            layer2.canvas.width = width * 32;
+            layer2.canvas.height = height * 32;
             
             layer3.canvas.width = width * 32;
             layer3.canvas.height = height * 32;
