@@ -163,6 +163,7 @@ var tinyMapEditor = (function() {
                 } else if (e.target.id === 'layer1' && !srcTile) {
                     destTile = this.getTile(e);
                     map.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
+                    tiles[destTile.col][destTile.row].base = null
                 }
             }
         },
@@ -187,6 +188,13 @@ var tinyMapEditor = (function() {
         clearMap : function(e) {
             if (e.target.id === 'clear') {
                 map.clearRect(0, 0, map.canvas.width, map.canvas.height);
+                tiles = []
+                for (y = 0; y < width; y++) {
+                	tiles[y] = []
+                    for (x = 0; x < height; x++) {
+                    	tiles[y][x] = {base: null, top:null, hit: false}
+                    }
+                }
                 this.destroy();
                 build.disabled = false;
             }
