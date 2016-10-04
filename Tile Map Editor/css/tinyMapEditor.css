@@ -18,7 +18,7 @@ header h2 { font-size: 14px; font-weight: normal; margin-bottom: 3px }
 /*************************************** Editor */
 section { display: block; margin: 0 auto; margin-right: 250px; height: 400px; overflow: scroll}
 canvas { cursor: pointer; position: relative; }
-#layer1 { background: url('bg.png') left top repeat; z-index: 0;}
+#layer1 { background: url('../assets/bg.png') left top repeat; z-index: 0;}
 #layer2 { position: absolute; left: 0; top: 0; z-index: 2; pointer-events:none;}
 #layer3 { position: absolute; left: 0; top: 0; z-index: 2; pointer-events:none;}
 
