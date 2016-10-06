@@ -16,6 +16,7 @@ var tinyMapEditor = (function() {
         tool = doc.getElementById('editTools').value,
         tileMode = doc.getElementById('mode').value,
         layer = doc.getElementById('layer').value,
+        ioToggled = false,
         player,
         draw,
         build = doc.getElementById('build'),
@@ -54,7 +55,7 @@ var tinyMapEditor = (function() {
             	can = layer2
             }
 
-            if (e.target.id === 'layer1' && srcTile && !draw) {
+            if (e.target.id === 'layer1' && !draw) {
                 destTile = this.getTile(e);
                 if (tool == "hit"){
                 	tiles[this.getTile(e).col][this.getTile(e).row].hit = !tiles[this.getTile(e).col][this.getTile(e).row].hit
@@ -62,13 +63,13 @@ var tinyMapEditor = (function() {
                 		layer3.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
                 	}
                 }
-                if (tool == "stamp"){
+                if (tool == "stamp" && srcTile ){
 	                if (layer == "base") {tiles[destTile.col][destTile.row].base = srcTile.row + srcTile.col * 57}
 	                if (layer == "top") {tiles[destTile.col][destTile.row].top = srcTile.row + srcTile.col * 57}
 	                can.clearRect(destTile.row * 32, destTile.col * 32, 32, 32);
 	                can.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, destTile.row * 32, destTile.col * 32, 32, 32);
                 }
-                if (tool == "fill"){
+                if (tool == "fill" && srcTile ){
                 	fillTile = tiles[destTile.col][destTile.row].base
                 	fillMap = JSON.parse(JSON.stringify(tiles));
                 	for (x = 0; x < width; x++) {
@@ -114,6 +115,10 @@ var tinyMapEditor = (function() {
 	                    	}
 	                    }
                     }
+                }
+                
+                if (tool == "enemy"){
+                	//do stuff
                 }
                 
                 if (tiles[this.getTile(e).col][this.getTile(e).row].hit == true){
@@ -321,6 +326,31 @@ var tinyMapEditor = (function() {
              */            
             document.getElementById('editTools').addEventListener('change', function() {
                 tool = this.value;
+                if (tool == "enemy"){
+                	console.log("enemy!")
+                	doc.getElementById('enemyMenu').style.visibility = 'visible'
+                    doc.getElementById('map').style.marginRight = '550px'
+                }
+                else if (ioToggled == false){
+                	doc.getElementById('enemyMenu').style.visibility = 'hidden'
+                    doc.getElementById('map').style.marginRight = '250px'
+                }
+            }, false);
+            
+            document.getElementById('ioToggle').addEventListener('click', function() {
+                layer = this.value;
+                if (doc.getElementById('io').style.visibility == 'hidden'){
+                	ioToggled = true
+	                doc.getElementById('io').style.visibility = 'visible'
+	                doc.getElementById('map').style.marginRight = '550px'
+                }
+                else{
+                	ioToggled = false
+                	if (tool != "enemy"){
+	                	doc.getElementById('io').style.visibility = 'hidden'
+	    	            doc.getElementById('map').style.marginRight = '250px'
+                	}
+                }
             }, false);
             
             document.getElementById('layer').addEventListener('change', function() {

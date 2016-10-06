@@ -8,7 +8,10 @@
 
 /**************************************** Layout */
 body, header, menu, section, canvas, ul, li, div, h1, h2, p { margin: 0; padding: 0 }
-body { font: 12px/16px Helvetica, Verdana, 'san-serif'; min-width: 570px }
+body { font: 12px/16px Helvetica, Verdana, 'san-serif'; min-width: 570px; height:100% }
+html {
+    height: 100%;
+}
 
 /*************************************** Header */
 header { text-align: center; padding: 15px 250px 15px 0; background: #eee; border-bottom: 1px solid #999; }
@@ -16,14 +19,14 @@ header h1 { font-size: 16px; margin-bottom: 5px }
 header h2 { font-size: 14px; font-weight: normal; margin-bottom: 3px }
 
 /*************************************** Editor */
-section { display: block; margin: 0 auto; margin-right: 250px; height: 400px; overflow: scroll}
+#map { display: block; margin: 0 auto; margin-right: 250px; height: 100%; overflow: scroll}
 canvas { cursor: pointer; position: relative; }
 #layer1 { background: url('../assets/bg.png') left top repeat; z-index: 0;}
 #layer2 { position: absolute; left: 0; top: 0; z-index: 2; pointer-events:none;}
 #layer3 { position: absolute; left: 0; top: 0; z-index: 2; pointer-events:none;}
 
 /*************************************** Tools  */
-menu { position: fixed;  overflow-y: auto; right: 0; top: 0; margin: 0; width: 250px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
+menu { position: fixed;  overflow-y: auto; overfol-x: visible; right: 0; top: 0; margin: 0; width: 250px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
 menu ul { list-style-type: none; text-align: center }
 menu li { padding-bottom: 10px }
 menu p { margin-bottom: 10px }
@@ -32,7 +35,7 @@ menu > ul > li > label { display: block; padding: 5px 0; margin-bottom: 10px; bo
     background: -webkit-linear-gradient(top, #eeeeee 0%,#cccccc 100%); background: -o-linear-gradient(top, #eeeeee 0%,#cccccc 100%); background: -ms-linear-gradient(top, #eeeeee 0%,#cccccc 100%);
     background: linear-gradient(top, #eeeeee 0%,#cccccc 100%) }
 /*div { background: white; margin: 5px; border: 1px solid #bbb }*/
-input[type=text] { width: 30px }
+input[type=number] { width: 40px }
 
 #options p label { display: inline-block; width: 80px; text-align: left }
 #options p span { display: inline-block; width: 20px; padding-left: 5px; text-align: left }
@@ -43,7 +46,12 @@ input[type=text] { width: 30px }
 
 #layers li { text-align: left }
 #layers li p { margin: 5px; padding: 5px; border: 1px solid #bbb }
+/*************************************** Enemy Menu */
+#enemyMenu { visibility: hidden; position: fixed;  overflow-y: auto; overfol-x: visible; right: 0; top: 0; margin-right: 250px; width: 300px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
+#enemyMenu p label { display: inline-block; width: 80px; text-align: left }
+#enemyMenu p span { display: inline-block; width: 20px; padding-left: 5px; text-align: left }
 
-/*************************************** Output */
-output { display: block; margin: 0 auto; padding-right: 250px; text-align: center; z-index: 3; position: relative }
-textarea { width: 400px; height: 200px; margin: 0; font-family: monospace }
+/*************************************** IO Menu*/
+#ioMenu { visibility: hidden; position: fixed;  overflow-y: auto; overfol-x: visible; right: 0; top: 0; margin-right: 250px; width: 300px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
+#ioMenu p label { display: inline-block; width: 80px; text-align: left }
+#ioMenu p textarea { resize: vertical; width: 250px; height: 300px; margin: 0; font-family: monospace }

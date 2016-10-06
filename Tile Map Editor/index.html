@@ -11,19 +11,43 @@
     
 </head>
 <body>
-    <section>
+    <section id="map">
         <canvas id="layer1"></canvas>
         <canvas id="layer2"></canvas>
         <canvas id="layer3"></canvas>
     </section>
+    <menu id="enemyMenu">
+        <ul>
+            <li id="enemy">
+                <label>Enemy Options</label>
+                <p><label>Name: </label><input type="text" value="" maxlength="10" id="eName" /><span></span></p>
+                <p><label>Health: </label><input type="number" value="10" maxlength="3" id="eHealth" /><span> hp</span></p>
+                <p><label>Attack: </label><input type="number" value="2" maxlength="3" id="eAttack" /><span> hp</span></p>
+                <p><label>Speed: </label><input type="number" value="2" maxlength="3" id="eSpeed" /><span></span></p>
+            </li>
+        </ul>
+    </menu>
+    
+    <menu id="ioMenu">
+        <ul>
+            <li id="io">
+                <label>Input / Output</label>
+                <p><textarea>
+                1. Create a tilemap
+                2. Hit 'build'
+                3. Copy the output
+                </textarea></p>
+            </li>
+        </ul>
+    </menu>
 
     <menu>
         <ul>
             <li id="options">
                 <label>Map Options</label>
-                <p><label>Tile size:</label><input type="text" value="16" maxlength="3" id="size" /><span>px</span></p>
-                <p><label>Map width:</label><input type="text" value="10" maxlength="3" id="width" /><span>tiles</span></p>
-                <p><label>Map height:</label><input type="text" value="10" maxlength="3" id="height" /><span>tiles</span></p>
+                <p><label>Tile size:</label><input type="number" value="16" maxlength="3" id="size" /><span>px</span></p>
+                <p><label>Map width:</label><input type="number" value="10" maxlength="3" id="width" /><span>tiles</span></p>
+                <p><label>Map height:</label><input type="number" value="10" maxlength="3" id="height" /><span>tiles</span></p>
             </li>
             <li id="tiles">
                 <label>Tiles </label>
@@ -45,24 +69,18 @@
                     <option value="fill">Fill</option>
                     <option value="erase">Eraser</option>
                     <option value="hit">Toggle Hitboxes</option>
+                    <option value="enemy">Add Enemy</option>
                 </select></p>
                 <p>Layer: <select id="layer" style="width: 120px;">
                     <option value="base" selected>Base</option>
                     <option value="top">Top</option>
                 </select></p>
                 <!--<p><input id="erase" type="button" value="Tile Eraser" /></p>-->
-                <p><input id="build" type="button" value="Build Map" /> <input id="clear" type="button" value="Clear Canvas" /></p>
+                <p><input id="ioToggle" type="button" value="I/O Menu" /> <input id="clear" type="button" value="Clear Canvas" /></p>
+                <!-- <input id="build" type="button" value="Build Map" /> -->
             </li>
         </ul>
     </menu>
-
-    <output>
-        <textarea>
-            1. Create a tilemap
-            2. Hit 'build'
-            3. Copy the output
-        </textarea>
-    </output>
 
     <script src="src/tileEditor.js"></script>
 
