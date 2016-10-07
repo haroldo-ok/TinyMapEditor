@@ -152,7 +152,6 @@ var tinyMapEditor = (function() {
 
             this.drawTool = function() {
             	if (tileMode == "single"){
-            		console.log(rect)
 	                rect.width = 32;
 	                srcTile ? ctx.drawImage(sprite, srcTile.row * tileSize + 1 * srcTile.row, srcTile.col * tileSize + 1 * srcTile.col, tileSize, tileSize, 0, 0, 32, 32) : eraser();
             	}
@@ -327,27 +326,27 @@ var tinyMapEditor = (function() {
             document.getElementById('editTools').addEventListener('change', function() {
                 tool = this.value;
                 if (tool == "enemy"){
-                	console.log("enemy!")
                 	doc.getElementById('enemyMenu').style.visibility = 'visible'
                     doc.getElementById('map').style.marginRight = '550px'
                 }
-                else if (ioToggled == false){
+                else{
                 	doc.getElementById('enemyMenu').style.visibility = 'hidden'
-                    doc.getElementById('map').style.marginRight = '250px'
+                	if (ioToggled == false){
+                		doc.getElementById('map').style.marginRight = '250px'
+                	}
                 }
             }, false);
             
             document.getElementById('ioToggle').addEventListener('click', function() {
-                layer = this.value;
-                if (doc.getElementById('io').style.visibility == 'hidden'){
+                if (ioToggled == false){
                 	ioToggled = true
 	                doc.getElementById('io').style.visibility = 'visible'
 	                doc.getElementById('map').style.marginRight = '550px'
                 }
                 else{
                 	ioToggled = false
+                	doc.getElementById('io').style.visibility = 'hidden'
                 	if (tool != "enemy"){
-	                	doc.getElementById('io').style.visibility = 'hidden'
 	    	            doc.getElementById('map').style.marginRight = '250px'
                 	}
                 }
@@ -359,11 +358,9 @@ var tinyMapEditor = (function() {
             
             document.getElementById('mode').addEventListener('change', function() {
                 tileMode = this.value;
-                console.log("change")
                 if (tileMode == "random"){
                 	srcList = []
                 	cntnt = doc.getElementById('selected')
-                	console.log(cntnt.childNodes)
                 	while (cntnt.childNodes.length > 3) {
                 	    cntnt.removeChild(cntnt.lastChild);
                 	}
