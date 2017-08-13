@@ -37,6 +37,15 @@ var tinyMapEditor = (function() {
             }
         },
 
+        setTileFromImport: function(destTile) {
+          var doc = document;
+          var map = doc.getElementById('tileEditor').getContext('2d');
+          srcTile = { row: 1, col: 1 }
+          destTile = { row: 1, col: 1 }
+          map.clearRect(destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+          map.drawImage(sprite, srcTile.row * tileSize, srcTile.col * tileSize, tileSize, tileSize, destTile.row * tileSize, destTile.col * tileSize, tileSize, tileSize);
+        },
+
         drawTool : function() {
             var rect = doc.createElement('canvas'),
                 ctx = rect.getContext('2d'),
