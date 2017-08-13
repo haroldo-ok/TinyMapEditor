@@ -5,7 +5,7 @@ var tinyMapEditor = (function() {
         map = doc.getElementById('tileEditor').getContext('2d'),
         width = 10,
         height = 10,
-        tileSize = 32,
+        tileSize = 16,
         srcTile = 0,
         sprite = new Image(),
         tiles, // used for demo, not *really* needed atm
@@ -160,7 +160,8 @@ var tinyMapEditor = (function() {
 
         outputJSON : function() {
             var output = '',
-                invert = document.getElementById('invert').checked;
+                invert = false;
+                // invert = document.getElementById('invert').checked;
 
             if (invert) {
                 alpha.forEach(function(arr) {
@@ -225,7 +226,7 @@ var tinyMapEditor = (function() {
         },
 
         init : function() {
-            sprite.src = 'assets/tilemap_32a.png';
+            sprite.src = 'assets/tilemap_16a.png';
             map.canvas.width = width * tileSize;
             map.canvas.height = height * tileSize;
             this.drawTool();

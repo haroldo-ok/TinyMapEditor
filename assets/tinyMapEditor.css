@@ -16,12 +16,12 @@ header h1 { font-size: 16px; margin-bottom: 5px }
 header h2 { font-size: 14px; font-weight: normal; margin-bottom: 3px }
 
 /*************************************** Editor */
-section { margin: 80px auto; text-align: center; padding-right: 250px }
+section { margin-left: 175px; }
 canvas { cursor: pointer; position: relative }
-#tileEditor { background: url('bg.png') left top repeat }
+#tileEditor { background: url('bg16.png') left top repeat }
 
 /*************************************** Tools  */
-menu { position: absolute; right: 0; top: 0; margin: 0; width: 250px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
+menu { position: absolute; top: 0; margin: 0; width: 175px; height: 100%; border-left: 1px solid #999; border-right: 1px solid #999; background: #eee; z-index: 10 }
 menu ul { list-style-type: none; text-align: center }
 menu li { padding-bottom: 10px }
 menu p { margin-bottom: 10px }
@@ -43,4 +43,4 @@ input[type=text] { width: 30px }
 
 /*************************************** Output */
 output { display: block; margin: 0 auto; padding-right: 250px; text-align: center; z-index: 1 }
-textarea { width: 400px; height: 200px; margin: 0; font-family: monospace }
+textarea { width: 168px; height: 50px; margin: 0; font-family: monospace }

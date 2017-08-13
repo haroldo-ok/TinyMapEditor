@@ -142,7 +142,8 @@
 
         outputJSON : function() {
             var output = '',
-                invert = document.getElementById('invert').checked;
+                invert = false;
+                // invert = document.getElementById('invert').checked;
 
             if (invert) {
                 alpha.forEach(function(arr) {

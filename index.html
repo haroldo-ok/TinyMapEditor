@@ -22,14 +22,13 @@
         <ul>
             <li id="options">
                 <label>Map Options</label>
-                <p><label>Tile size:</label><input type="text" value="32" maxlength="3" disabled /><span>px</span></p>
+                <!-- <p><label>Tile size:</label><input type="text" value="32" maxlength="3" disabled /><span>px</span></p> -->
                 <p><label>Map width:</label><input type="text" value="10" maxlength="3" id="width" /><span>tiles</span></p>
                 <p><label>Map height:</label><input type="text" value="10" maxlength="3" id="height" /><span>tiles</span></p>
             </li>
             <li id="tiles">
                 <label>Tiles</label>
                 <canvas id="palette"></canvas>
-                <input type="file" disabled />
             </li>
             <li id="selected">
                 <label>Selected Tile</label>
@@ -40,15 +39,14 @@
                 <p><input id="build" type="button" value="Build Map" /></p>
                 <p><input id="clear" type="button" value="Clear Canvas" /></p>
                 <br />
-                <p>
-                    <span>Invert output?</span>
-                    <input id="invert" type="checkbox" />
-                </p>
+                <!-- <p> -->
+                <!--     <span>Invert output?</span> -->
+                <!--     <input id="invert" type="checkbox" /> -->
+                <!-- </p> -->
 
             </li>
-        </ul>
-    </menu>
-
+            <li id="output">
+                <label>Output</label>
     <output>
     <textarea>
     1. Create tile map.
@@ -56,6 +54,17 @@
     3. Profit!
     </textarea>
     </output>
+            </li>
+        </ul>
+    </menu>
+
+    <!-- <output> -->
+    <!-- <textarea> -->
+    <!-- 1. Create tile map. -->
+    <!-- 2. ??? -->
+    <!-- 3. Profit! -->
+    <!-- </textarea> -->
+    <!-- </output> -->
 
     <script src="tileEditor.js"></script>
 
