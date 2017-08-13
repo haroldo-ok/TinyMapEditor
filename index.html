@@ -22,7 +22,6 @@
         <ul>
             <li id="options">
                 <label>Map Options</label>
-                <!-- <p><label>Tile size:</label><input type="text" value="32" maxlength="3" disabled /><span>px</span></p> -->
                 <p><label>Map width:</label><input type="text" value="10" maxlength="3" id="width" /><span>tiles</span></p>
                 <p><label>Map height:</label><input type="text" value="10" maxlength="3" id="height" /><span>tiles</span></p>
             </li>
@@ -36,14 +35,7 @@
             <li id="tools">
                 <label>Tools</label>
                 <p><input id="erase" type="button" value="Tile Eraser" /></p>
-                <!-- <p><input id="build" type="button" value="Build Map" /></p> -->
                 <p><input id="clear" type="button" value="Clear Canvas" /></p>
-                <br />
-                <!-- <p> -->
-                <!--     <span>Invert output?</span> -->
-                <!--     <input id="invert" type="checkbox" /> -->
-                <!-- </p> -->
-
             </li>
             <li id="import">
               <label>Import</label>
@@ -58,19 +50,26 @@
                 <textarea id="taOutput">Hit Export to generate</textarea>
               </output>
               <p><input id="build" type="button" value="Export" /></p>
+              <p><input id="copyBtn" type="button" value="Copy to Clipboard" /></p>
             </li>
         </ul>
     </menu>
 
-    <!-- <output> -->
-    <!-- <textarea> -->
-    <!-- 1. Create tile map. -->
-    <!-- 2. ??? -->
-    <!-- 3. Profit! -->
-    <!-- </textarea> -->
-    <!-- </output> -->
-
     <script src="tileEditor.js"></script>
-
+    <script>
+      var copyTextareaBtn = document.querySelector('#copyBtn');
+      copyTextareaBtn.addEventListener('click', function(event) {
+        var copyTextarea = document.querySelector('#taOutput');
+        copyTextarea.select();
+        try {
+          var successful = document.execCommand('copy');
+          var msg = successful ? 'successful' : 'unsuccessful';
+          // console.log('Copying text command was ' + msg);
+        } catch (err) {
+          alert('Your browser doesn\'t support this copy method. Please copy manually.');
+          console.log('Oops, unable to copy');
+        }
+      });
+    </script>
 </body>
 </html>
