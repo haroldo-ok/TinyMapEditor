@@ -36,7 +36,7 @@
             <li id="tools">
                 <label>Tools</label>
                 <p><input id="erase" type="button" value="Tile Eraser" /></p>
-                <p><input id="build" type="button" value="Build Map" /></p>
+                <!-- <p><input id="build" type="button" value="Build Map" /></p> -->
                 <p><input id="clear" type="button" value="Clear Canvas" /></p>
                 <br />
                 <!-- <p> -->
@@ -47,16 +47,17 @@
             </li>
             <li id="import">
               <label>Import</label>
-            </li>
-            <li id="output">
-              <label>Output</label>
               <output>
-                <textarea>
-                1. Create tile map.
-                2. ???
-                3. Profit!
-                </textarea>
+                <textarea id="taImport">Import your map here</textarea>
               </output>
+              <p><input id="import" type="button" value="Import" /></p>
+            </li>
+            <li id="export">
+              <label>Export</label>
+              <output>
+                <textarea id="taOutput">Hit Export to generate</textarea>
+              </output>
+              <p><input id="build" type="button" value="Export" /></p>
             </li>
         </ul>
     </menu>

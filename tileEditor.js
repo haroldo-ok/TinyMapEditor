@@ -84,7 +84,7 @@ var tinyMapEditor = (function() {
         },
 
         drawMap : function() {
-            var i, j, invert = document.getElementById('invert').checked ? 0 : 1;
+            var i, j, invert = 1;
 
             map.fillStyle = 'black';
             for (i = 0; i < width; i++) {
@@ -185,7 +185,8 @@ var tinyMapEditor = (function() {
             // output = output.concat('],');
 
             output = JSON.stringify(alpha);
-            doc.getElementsByTagName('textarea')[0].value = output;
+            // doc.getElementsByTagName('textarea')[0].value = output;
+            doc.getElementById('taOutput').value = output;
         },
 
         bindEvents : function() {
