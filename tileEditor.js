@@ -54,6 +54,11 @@ var tinyMapEditor = (function() {
 			storage.put('maps', this.data || []);
 		},
 		
+		replaceAll: function(data) {
+			this.data = data;
+			this.saveAll();
+		},
+		
 		listAll: function() {
 			return this.data;
 		},
@@ -331,6 +336,8 @@ var tinyMapEditor = (function() {
 			
 			this.loadSizeVariablesFromObject(project.options);
 			this.updateSizeVariables();
+			
+			maps.replaceAll(project.maps);
 			
 			tiles = project.maps[0].tileIndexes;
 			this.saveMap();
