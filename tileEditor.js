@@ -184,6 +184,10 @@ var tinyMapEditor = (function() {
 			this.saveCurrentMapToMapList();
 
 			const selectedId = parseInt(target.value);
+			this.selectMapById(selectedId);
+		},
+		
+		selectMapById: function(selectedId) {			
 			const selectedMap = maps.findById(selectedId);
 			if (!selectedMap) throw new Error("Couldn't find map with ID = " + target.value);
 			
@@ -339,7 +343,7 @@ var tinyMapEditor = (function() {
 			
 			maps.replaceAll(project.maps);
 			
-			tiles = project.maps[0].tileIndexes;
+			this.selectMapById(project.maps[0].id);
 			this.saveMap();
 			
 			storage.put('tileSet', project.tileSet);
