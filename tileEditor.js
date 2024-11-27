@@ -17,7 +17,7 @@ var tinyMapEditor = (function() {
 		tileSetName,
 		mapName,
 		mapId,
-        tiles, // used for demo, not *really* needed atm
+        tiles,
         alpha,
 
         player,
@@ -32,6 +32,7 @@ var tinyMapEditor = (function() {
         tileSizeInput = getById('tileSize'),
 		tileZoomInput = getById('tileZoom'),
 		
+        addMap = getById('addMap'),
 		mapList = getById('mapList');
 		
 	const STORAGE_PREFIX = 'TinyMapEditor.';
@@ -53,6 +54,11 @@ var tinyMapEditor = (function() {
 			storage.put('maps', this.data || []);
 		},
 		
+		replaceAll: function(data) {
+			this.data = data;
+			this.saveAll();
+		},
+		
 		listAll: function() {
 			return this.data;
 		},
@@ -62,24 +68,30 @@ var tinyMapEditor = (function() {
 		},
 		
 		upsert: function(map) {
-			const {id, ...remaining} = map;
+			const { id, name, ...remaining } = map;
 			const mapIds = this.data.map(m => m.id);
+			
 			let usedId = id;
+			
+			const prepareMap = (id) => {
+				return { 
+					id, 
+					name: name || ('Unnamed ' + id),
+					...remaining
+				};
+			};
 			
 			if (id < 1) {
 				// Map with no ID: create ID and append
 				const maxId = mapIds.length ? Math.max(...mapIds) : 0;
 				usedId = maxId + 1;
-				this.data.push({
-					id: usedId,
-					...remaining
-				});						
+				this.data.push(prepareMap(usedId));						
 			} else if (mapIds.includes(id)) {
 				// Map with existing ID: replace it.
-				this.data = this.data.map(existingMap => existingMap.id === id ? map : existingMap);
+				this.data = this.data.map(existingMap => existingMap.id === id ? prepareMap(id) : existingMap);
 			} else {
 				// Map with non-existing ID: append
-				this.data.push(map);
+				this.data.push(prepareMap(id));
 			}
 			
 			this.saveAll();
@@ -160,6 +172,17 @@ var tinyMapEditor = (function() {
 				.join('\n');
 		},
 		
+		addNewMap: function(e) {
+			this.saveCurrentMapToMapList();
+			
+			mapId = 0;			
+			mapNameInput.value = '';
+			this.clearMap(e);
+			
+			this.saveCurrentMapToMapList();
+			this.loadMap();
+		},
+		
 		selectMap: function(e) {
 			const target = e.target || e.srcElement;
 			if (target.name !== 'selectedMap') return;
@@ -167,6 +190,10 @@ var tinyMapEditor = (function() {
 			this.saveCurrentMapToMapList();
 
 			const selectedId = parseInt(target.value);
+			this.selectMapById(selectedId);
+		},
+		
+		selectMapById: function(selectedId) {			
 			const selectedMap = maps.findById(selectedId);
 			if (!selectedMap) throw new Error("Couldn't find map with ID = " + target.value);
 			
@@ -214,7 +241,7 @@ var tinyMapEditor = (function() {
 			}
 
 			mapId = map.id || 0;
-			mapName = map.name || 'Unnamed';
+			mapName = map.name || '';
 			mapNameInput.value = mapName;
 			
 			this.drawMapList();
@@ -320,7 +347,9 @@ var tinyMapEditor = (function() {
 			this.loadSizeVariablesFromObject(project.options);
 			this.updateSizeVariables();
 			
-			tiles = project.maps[0].tileIndexes;
+			maps.replaceAll(project.maps);
+			
+			this.selectMapById(project.maps[0].id);
 			this.saveMap();
 			
 			storage.put('tileSet', project.tileSet);
@@ -378,7 +407,9 @@ var tinyMapEditor = (function() {
 			/**
 			 * Map list events.
 			 */
+
 			mapList.addEventListener('change', e => _this.selectMap(e));
+			addMap.addEventListener('click', e => _this.addNewMap(e));
 			
 			/***
 			 * Tile editor events
