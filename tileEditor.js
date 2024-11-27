@@ -17,7 +17,7 @@ var tinyMapEditor = (function() {
 		tileSetName,
 		mapName,
 		mapId,
-        tiles, // used for demo, not *really* needed atm
+        tiles,
         alpha,
 
         player,
@@ -32,6 +32,7 @@ var tinyMapEditor = (function() {
         tileSizeInput = getById('tileSize'),
 		tileZoomInput = getById('tileZoom'),
 		
+        addMap = getById('addMap'),
 		mapList = getById('mapList');
 		
 	const STORAGE_PREFIX = 'TinyMapEditor.';
@@ -158,6 +159,17 @@ var tinyMapEditor = (function() {
 					return `<p><label><input type="radio" name="selectedMap" value="${id}" ${id === mapId ? 'checked' : ''} />${name}</label></p>`;
 				})
 				.join('\n');
+		},
+		
+		addNewMap: function(e) {
+			this.saveCurrentMapToMapList();
+			
+			mapId = 0;			
+			mapNameInput.value = '';
+			this.clearMap(e);
+			
+			this.saveCurrentMapToMapList();
+			this.loadMap();
 		},
 		
 		selectMap: function(e) {
@@ -378,7 +390,9 @@ var tinyMapEditor = (function() {
 			/**
 			 * Map list events.
 			 */
+
 			mapList.addEventListener('change', e => _this.selectMap(e));
+			addMap.addEventListener('click', e => _this.addNewMap(e));
 			
 			/***
 			 * Tile editor events
