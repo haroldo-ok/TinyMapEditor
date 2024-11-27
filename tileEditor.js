@@ -76,7 +76,7 @@ var tinyMapEditor = (function() {
 			const prepareMap = (id) => {
 				return { 
 					id, 
-					name,
+					name: name || ('Unnamed ' + id),
 					...remaining
 				};
 			};
@@ -241,7 +241,7 @@ var tinyMapEditor = (function() {
 			}
 
 			mapId = map.id || 0;
-			mapName = map.name || 'Unnamed';
+			mapName = map.name || '';
 			mapNameInput.value = mapName;
 			
 			this.drawMapList();
