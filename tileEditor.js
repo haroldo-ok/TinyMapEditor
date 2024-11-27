@@ -68,24 +68,30 @@ var tinyMapEditor = (function() {
 		},
 		
 		upsert: function(map) {
-			const {id, ...remaining} = map;
+			const { id, name, ...remaining } = map;
 			const mapIds = this.data.map(m => m.id);
+			
 			let usedId = id;
+			
+			const prepareMap = (id) => {
+				return { 
+					id, 
+					name,
+					...remaining
+				};
+			};
 			
 			if (id < 1) {
 				// Map with no ID: create ID and append
 				const maxId = mapIds.length ? Math.max(...mapIds) : 0;
 				usedId = maxId + 1;
-				this.data.push({
-					id: usedId,
-					...remaining
-				});						
+				this.data.push(prepareMap(usedId));						
 			} else if (mapIds.includes(id)) {
 				// Map with existing ID: replace it.
-				this.data = this.data.map(existingMap => existingMap.id === id ? map : existingMap);
+				this.data = this.data.map(existingMap => existingMap.id === id ? prepareMap(id) : existingMap);
 			} else {
 				// Map with non-existing ID: append
-				this.data.push(map);
+				this.data.push(prepareMap(id));
 			}
 			
 			this.saveAll();
