@@ -30,7 +30,9 @@ var tinyMapEditor = (function() {
 		widthInput = getById('width'),
         heightInput = getById('height'),
         tileSizeInput = getById('tileSize'),
-		tileZoomInput = getById('tileZoom');
+		tileZoomInput = getById('tileZoom'),
+		
+		mapList = getById('mapList');
 		
 	const STORAGE_PREFIX = 'TinyMapEditor.';
 	const storage = {
@@ -53,6 +55,10 @@ var tinyMapEditor = (function() {
 		
 		listAll: function() {
 			return this.data;
+		},
+		
+		findById: function(id) {
+			return this.data.find(m => m.id === id);
 		},
 		
 		upsert: function(map) {
@@ -145,12 +151,34 @@ var tinyMapEditor = (function() {
             srcTile ? ctx.drawImage(sprite, srcTile.col * tileSize, srcTile.row * tileSize, tileSize, tileSize, 0, 0, tileSize, tileSize) : eraser();
 			selectedTileIndex.innerHTML = srcTile ? srcTile.tileIndex : 'None';
         },
+		
+		drawMapList: function() {
+			mapList.innerHTML = maps.listAll()
+				.map(({ name, id }) => {
+					return `<p><label><input type="radio" name="selectedMap" value="${id}" ${id === mapId ? 'checked' : ''} />${name}</label></p>`;
+				})
+				.join('\n');
+		},
+		
+		selectMap: function(e) {
+			const target = e.target || e.srcElement;
+			if (target.name !== 'selectedMap') return;
+			
+			this.saveCurrentMapToMapList();
+
+			const selectedId = parseInt(target.value);
+			const selectedMap = maps.findById(selectedId);
+			if (!selectedMap) throw new Error("Couldn't find map with ID = " + target.value);
+			
+			storage.put('map', selectedMap);
+			this.loadMap();
+		},
 
         eraseTile : function(e) {		
 			const destTile = this.getTile(e);
 			this.eraseTileByCoord(destTile.col, destTile.row);
 			this.setTileIndex(destTile.col, destTile.row, 0);
-        },
+        },		
 
         eraseTileByCoord : function(col, row) {		
 			map.clearRect(col * tileSize, row * tileSize, tileSize, tileSize);
@@ -188,6 +216,8 @@ var tinyMapEditor = (function() {
 			mapId = map.id || 0;
 			mapName = map.name || 'Unnamed';
 			mapNameInput.value = mapName;
+			
+			this.drawMapList();
 		},
 		
         saveMap : function() {			
@@ -240,11 +270,16 @@ var tinyMapEditor = (function() {
 				tiles[row] = tilesRow;
 			}
 		},
-
-        outputJSON : function() {
+		
+		saveCurrentMapToMapList : function() {
 			this.prepareMapStructure();
 			mapId = maps.upsert(this.getMapObject());
 			this.saveMap();
+			this.drawMapList();
+		},
+
+        outputJSON : function() {
+			this.saveCurrentMapToMapList();
 			
 			const project = {
 				tool: {
@@ -339,6 +374,11 @@ var tinyMapEditor = (function() {
 				
                 _this.drawTool();
             }, false);
+			
+			/**
+			 * Map list events.
+			 */
+			mapList.addEventListener('change', e => _this.selectMap(e));
 			
 			/***
 			 * Tile editor events
@@ -448,6 +488,7 @@ var tinyMapEditor = (function() {
 			map.canvas.style.zoom = tileZoom;
 			
             this.drawTool();
+			this.drawMapList();
         },
 
         destroy : function() {
