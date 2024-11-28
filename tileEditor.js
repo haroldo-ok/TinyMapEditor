@@ -97,6 +97,11 @@ var tinyMapEditor = (function() {
 			
 			this.saveAll();
 			return usedId;
+		},
+		
+		deleteById: function(id) {
+			this.data = this.data.filter(m => m.id !== id);
+			this.saveAll();
 		}
 	};
 
@@ -186,6 +191,18 @@ var tinyMapEditor = (function() {
 		
 		deleteCurrentMap: function(e) {
 			if (!confirm(`This will delete the map called\n"${mapName}"\nAre you sure you want to delete it?`)) return;
+			
+			try {
+				if (maps.listAll().length < 2) throw Error("Sorry, this is the last remaining map, and can't be deleted.");
+				
+				maps.deleteById(mapId);
+				this.selectMapById(maps.listAll()[0].id);
+				this.drawMapList();				
+			} catch (e) {
+				const prefix = 'Error while deleting the map';
+				console.error(prefix, e);
+				alert(prefix + ': ' + e);
+			}
 		},
 		
 		selectMap: function(e) {
