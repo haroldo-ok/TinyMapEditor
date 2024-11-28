@@ -33,6 +33,7 @@ var tinyMapEditor = (function() {
 		tileZoomInput = getById('tileZoom'),
 		
         addMap = getById('addMap'),
+        deleteMap = getById('deleteMap'),
 		mapList = getById('mapList');
 		
 	const STORAGE_PREFIX = 'TinyMapEditor.';
@@ -181,6 +182,10 @@ var tinyMapEditor = (function() {
 			
 			this.saveCurrentMapToMapList();
 			this.loadMap();
+		},
+		
+		deleteCurrentMap: function(e) {
+			if (!confirm(`This will delete the map called\n"${mapName}"\nAre you sure you want to delete it?`)) return;
 		},
 		
 		selectMap: function(e) {
@@ -410,6 +415,7 @@ var tinyMapEditor = (function() {
 
 			mapList.addEventListener('change', e => _this.selectMap(e));
 			addMap.addEventListener('click', e => _this.addNewMap(e));
+			deleteMap.addEventListener('click', e => _this.deleteCurrentMap(e));
 			
 			/***
 			 * Tile editor events
