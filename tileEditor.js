@@ -172,8 +172,12 @@ var tinyMapEditor = (function() {
 		
 		drawMapList: function() {
 			mapList.innerHTML = maps.listAll()
-				.map(({ name, id }) => {
-					return `<p><label><input type="radio" name="selectedMap" value="${id}" ${id === mapId ? 'checked' : ''} />${name}</label></p>`;
+				.map(({ name, id, tileIndexes }) => {
+					return '<p><label>' +
+						`<input type="radio" name="selectedMap" value="${id}" ${id === mapId ? 'checked' : ''} />` + 
+						name +
+						`<image class="thumbnail loading" data-tme-tile="${JSON.stringify(tileIndexes)}" />` +
+					'</label></p>';
 				})
 				.join('\n');
 		},
