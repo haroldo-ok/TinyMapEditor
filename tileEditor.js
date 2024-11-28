@@ -131,15 +131,15 @@ var tinyMapEditor = (function() {
         setTile : function(e) {
 			const destTile = this.getTile(e);
 			
-			this.setTileByCoord(destTile.col, destTile.row, srcTile);
+			this.setTileByCoord(destTile.col, destTile.row, srcTile, map);
 			this.setTileIndex(destTile.col, destTile.row, srcTile.tileIndex);
 			
 			this.saveMap();
         },
 		
-		setTileByCoord : function(destCol, destRow, srcTile) {
-			map.clearRect(destCol * tileSize, destRow * tileSize, tileSize, tileSize);
-			map.drawImage(sprite, srcTile.col * tileSize, srcTile.row * tileSize, tileSize, tileSize, destCol * tileSize, destRow * tileSize, tileSize, tileSize);
+		setTileByCoord : function(destCol, destRow, srcTile, ctx) {
+			ctx.clearRect(destCol * tileSize, destRow * tileSize, tileSize, tileSize);
+			ctx.drawImage(sprite, srcTile.col * tileSize, srcTile.row * tileSize, tileSize, tileSize, destCol * tileSize, destRow * tileSize, tileSize, tileSize);
 		},
 		
 		setTileIndex : function(col, row, tileIndex) {
@@ -229,8 +229,8 @@ var tinyMapEditor = (function() {
 			this.setTileIndex(destTile.col, destTile.row, 0);
         },		
 
-        eraseTileByCoord : function(col, row) {		
-			map.clearRect(col * tileSize, row * tileSize, tileSize, tileSize);
+        eraseTileByCoord : function(col, row, ctx) {		
+			ctx.clearRect(col * tileSize, row * tileSize, tileSize, tileSize);
 		},
 		
         drawMap : function() {
@@ -244,10 +244,10 @@ var tinyMapEditor = (function() {
         },
 		
         loadMap : function() {
-			const map = storage.get('map');
-			if (!map) return;
+			const currentMap = storage.get('map');
+			if (!currentMap) return;
 			
-			tiles = map.tileIndexes;
+			tiles = currentMap.tileIndexes;
 			this.prepareMapStructure();
 
 			for (let row = 0; row < height; row++) {
@@ -255,15 +255,15 @@ var tinyMapEditor = (function() {
 					const tileIndex = tiles[row][col];
 					const localSrcTile = this.getSrcTileCoordByIndex(tileIndex);
 					if (localSrcTile) {
-						this.setTileByCoord(col, row, localSrcTile);
+						this.setTileByCoord(col, row, localSrcTile, map);
 					} else {
-						this.eraseTileByCoord(col, row);
+						this.eraseTileByCoord(col, row, map);
 					}
 				}
 			}
 
-			mapId = map.id || 0;
-			mapName = map.name || '';
+			mapId = currentMap.id || 0;
+			mapName = currentMap.name || '';
 			mapNameInput.value = mapName;
 			
 			this.drawMapList();
@@ -309,14 +309,18 @@ var tinyMapEditor = (function() {
 		
 		prepareMapStructure : function() {
 			tiles = tiles || [];
-			tiles.length = height;
+			this.prepareMapTiles(tiles);
+		},
+		
+		prepareMapTiles : function(mapTiles) {
+			mapTiles.length = height;
 			for (let row = 0; row < height; row++) {
-				const tilesRow = tiles[row] || [];
+				const tilesRow = mapTiles[row] || [];
 				tilesRow.length = width;
 				for (let col = 0; col < width; col++) {
 					tilesRow[col] = tilesRow[col] || 0;
 				}
-				tiles[row] = tilesRow;
+				mapTiles[row] = tilesRow;
 			}
 		},
 		
