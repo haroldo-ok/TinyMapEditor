@@ -180,8 +180,27 @@ var tinyMapEditor = (function() {
 					'</label></p>';
 				})
 				.join('\n');
+				
+			this.generateThumbnails();
 		},
 		
+		generateThumbnails: function() {
+			[...document.querySelectorAll("#mapList .thumbnail")].forEach(thumbnail => {
+				window.setTimeout(() => {
+					const tileIndexes = JSON.parse(thumbnail.dataset.tmeTile);
+					
+					const canvas = document.createElement('canvas');
+					canvas.width = width * tileSize;
+					canvas.height = height * tileSize;
+					
+					this.prepareMapTiles(tileIndexes);
+					this.loadMapIntoContext(tileIndexes, canvas.getContext('2d'));
+					
+					thumbnail.src = canvas.toDataURL();
+				}, 0);
+			});
+		},
+			
 		addNewMap: function(e) {
 			this.saveCurrentMapToMapList();
 			
@@ -254,23 +273,27 @@ var tinyMapEditor = (function() {
 			tiles = currentMap.tileIndexes;
 			this.prepareMapStructure();
 
-			for (let row = 0; row < height; row++) {
-				for (let col = 0; col < width; col++) {
-					const tileIndex = tiles[row][col];
-					const localSrcTile = this.getSrcTileCoordByIndex(tileIndex);
-					if (localSrcTile) {
-						this.setTileByCoord(col, row, localSrcTile, map);
-					} else {
-						this.eraseTileByCoord(col, row, map);
-					}
-				}
-			}
+			this.loadMapIntoContext(tiles, map);
 
 			mapId = currentMap.id || 0;
 			mapName = currentMap.name || '';
 			mapNameInput.value = mapName;
 			
 			this.drawMapList();
+		},
+		
+		loadMapIntoContext(tileIndexes, ctx) {
+			for (let row = 0; row < height; row++) {
+				for (let col = 0; col < width; col++) {
+					const tileIndex = tileIndexes[row][col];
+					const localSrcTile = this.getSrcTileCoordByIndex(tileIndex);
+					if (localSrcTile) {
+						this.setTileByCoord(col, row, localSrcTile, ctx);
+					} else {
+						this.eraseTileByCoord(col, row, ctx);
+					}
+				}
+			}
 		},
 		
         saveMap : function() {			

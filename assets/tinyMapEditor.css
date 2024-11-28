@@ -15,6 +15,11 @@ header { text-align: center; padding: 15px 250px; background: #eee; border-botto
 header h1 { font-size: 16px; margin-bottom: 5px }
 header h2 { font-size: 14px; font-weight: normal; margin-bottom: 3px }
 
+/*************************************** Map List */
+
+#mapList .thumbnail { display: block; width: 128px; margin: auto; opacity: 0.5 }
+#mapList p:has([type=radio]:checked) { background: #cccccc }
+
 /*************************************** Editor */
 section { margin: 80px auto; text-align: center; padding-left: 250px, padding-right: 250px }
 canvas { cursor: pointer; position: relative }
